@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Bienvenida</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 class="mb-4">Bienvenido</h2>
+
+    <div class="card p-4">
+        <p id="usuario"></p>
+        <p id="hora"></p>
+
+        <button id="logoutBtn" class="btn btn-danger mt-3">Cerrar Sesión</button>
+    </div>
+</div>
+
+<script>
+const token = localStorage.getItem("token"); // Información del token
+const usuario = localStorage.getItem("usuario"); // Nombre de usuario
+
+// Protección de acceso
+if (!token) {
+    window.location.href = "nopermisos.html";
+}
+
+// Mostrar usuario y fecha/hora
+document.getElementById("usuario").textContent = `Bienvenido al usuario: ${usuario}`;
+document.getElementById("hora").textContent = `Hora actual: ${new Date().toLocaleString()}`;
+
+// Cerrar sesión
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    window.location.href = "login.html";
+});
+</script>
+
+</body>
+</html>
