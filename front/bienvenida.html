@@ -14,23 +14,46 @@
     <div class="card p-4">
         <p id="usuario"></p>
         <p id="hora"></p>
+        <p id="mensaje"></p>
 
         <button id="logoutBtn" class="btn btn-danger mt-3">Cerrar Sesión</button>
     </div>
 </div>
 
 <script>
-const token = localStorage.getItem("token"); // Información del token
-const usuario = localStorage.getItem("usuario"); // Nombre de usuario
+// Obtener token desde localStorage
+const token = localStorage.getItem("token");
 
 // Protección de acceso
 if (!token) {
     window.location.href = "nopermisos.html";
 }
 
-// Mostrar usuario y fecha/hora
-document.getElementById("usuario").textContent = `Bienvenido al usuario: ${usuario}`;
-document.getElementById("hora").textContent = `Hora actual: ${new Date().toLocaleString()}`;
+// Fetch al endpoint protegido (bienvenida.php)
+fetch("../back/bienvenida.php", {
+    method: "GET",
+    headers: {
+        "Authorization": "Bearer " + token
+    }
+})
+.then(res => {
+    if (res.status === 200) return res.json();
+    else if (res.status === 401 || res.status === 403) {
+        window.location.href = "nopermisos.html";
+    } else {
+        throw new Error("Error inesperado");
+    }
+})
+.then(data => {
+    // Mostrar los datos obtenidos
+    document.getElementById("usuario").textContent = `Bienvenido al usuario: ${data.usuario}`;
+    document.getElementById("hora").textContent = `Hora actual: ${data.hora}`;
+    document.getElementById("mensaje").textContent = data.mensaje;
+})
+.catch(err => {
+    console.error(err);
+    alert("Error al obtener los datos del usuario");
+});
 
 // Cerrar sesión
 document.getElementById("logoutBtn").addEventListener("click", () => {
